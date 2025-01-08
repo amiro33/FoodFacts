@@ -1,6 +1,6 @@
 # CSC394Project
 # Team Members
-Group 4: A.Miro, A.Shep, D.Rimm
+Group 6: A. Syed, T.Wright, J.Sanchez, A.Miroslawska
 # Project Ptch
 # Front End
 # Back End 
