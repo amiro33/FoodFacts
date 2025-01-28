@@ -7,4 +7,4 @@ import { FoodFactsService } from './food-facts.service';
   controllers: [FoodFactsController],
   providers: [FoodFactsService],
 })
-export class AppModule {}
+export class FoodFactsModule {}
