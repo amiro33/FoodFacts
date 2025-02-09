@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
-import { FoodFactsModule } from './food-facts.module';
-import { AuthModule } from './auth.module';
+import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [FoodFactsModule, AuthModule],
+  imports: [AuthModule, 
+    ConfigModule.forRoot({
+      isGlobal: true,
+    })
+    ],
   controllers: [],
   providers: [],
 })
