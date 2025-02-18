@@ -14,7 +14,7 @@ export class AuthController {
   }
   @Post("")
   async createUser(@Body() { username, password }) {
-    return await this.userService.createUser(username, password);
+    return await this.authService.createUser(username, password);
   }
   // @Get("")
   // async getAllUsers() {
