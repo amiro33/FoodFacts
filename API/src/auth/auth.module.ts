@@ -7,11 +7,14 @@ import { AuthController } from "./auth.controller";
 import { UsersModule } from "src/users/users.module";
 import { LocalStrategy } from "./local.strategy";
 import { JwtStrategy } from "./jwt.strategy";
+import { userProviders } from "src/entities/user.entity";
+import { DatabaseModule } from "src/database/database.module";
 
 @Module({
   imports: [
     ConfigModule, // Ensure ConfigModule is imported
     UsersModule,
+    DatabaseModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule], // Import ConfigModule
@@ -23,6 +26,6 @@ import { JwtStrategy } from "./jwt.strategy";
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [...userProviders,AuthService, LocalStrategy, JwtStrategy],
 })
 export class AuthModule {}
