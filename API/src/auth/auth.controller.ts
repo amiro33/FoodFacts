@@ -3,21 +3,23 @@ import { AuthService } from "./auth.service";
 import { AuthGuard } from "@nestjs/passport";
 import { LocalAuthGuard } from "./local.guard";
 import { JwtAuthGuard } from "./jwt.guard";
+import { UsersService } from "src/users/users.service";
 
 @Controller("auth")
 export class AuthController {
   constructor(
     private authService: AuthService,
+    private userService: UsersService
   ) {
   }
   @Post("")
   async createUser(@Body() { username, password }) {
-    // return await this.authService.createUser(username, password);
+    return await this.userService.createUser(username, password);
   }
-  @Get("")
-  async getAllUsers() {
-    return await this.authService.getAllUsers();
-  }
+  // @Get("")
+  // async getAllUsers() {
+  //   return await this.authService.getAllUsers();
+  // }
 
   @UseGuards(LocalAuthGuard)
   @Post("logout")

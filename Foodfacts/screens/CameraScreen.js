@@ -1,11 +1,12 @@
 // screens/CameraScreen.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Button, Image, StyleSheet, Text } from 'react-native';
-import { Camera } from 'expo-camera';
+import { Camera, CameraView } from 'expo-camera';
 
 const CameraScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
-  const [cameraRef, setCameraRef] = useState(null);
+  const cameraRef = useRef(null);
+  const [cameraUsed, setCameraUsed] = useState('back');
   const [photo, setPhoto] = useState(null);
 
   useEffect(() => {
@@ -22,6 +23,9 @@ const CameraScreen = () => {
     }
   };
 
+  const switchCamera = () => {
+
+  }
   const logAction = () => {
     alert("Log button pressed!");
   };
@@ -43,21 +47,17 @@ const CameraScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Camera style={styles.camera} ref={ref => setCameraRef(ref)}>
+      {/* <Camera style={styles.camera} ref={cameraRef}> */}
+      <CameraView facing="back" style={styles.camera}>
         <View style={styles.buttonContainer}>
-          <Button title="Take Picture" onPress={takePicture} />
+          <Button  title="Take Picture" onPress={takePicture} />
         </View>
-      </Camera>
+      </CameraView>
       {photo && (
         <View style={styles.imageContainer}>
           <Image source={{ uri: photo }} style={styles.image} />
         </View>
       )}
-      <View style={styles.bottomButtonContainer}>
-        <Button title="Log" onPress={logAction} />
-        <Button title="Stats" onPress={statsAction} />
-        <Button title="Scan" onPress={scanAction} />
-      </View>
     </View>
   );
 };
