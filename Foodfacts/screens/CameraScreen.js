@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Button, Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Camera, CameraView } from 'expo-camera';
 import * as FileSystem from 'expo-file-system';
+import { OPENAI_API_KEY } from '@env'
 
 import foodLogo from '../assets/camera2.png';
 import { useNavigation } from '@react-navigation/native';
@@ -35,7 +36,7 @@ const CameraScreen = () => {
       const response = await fetch('https://api.openai.com/v1/images/generate',{
         method: 'POST',
         headers:{
-          'Authorization': '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',
+          'Authorization': OPENAI_API_KEY,
           'Content-Type' : 'application/json',
         },
         body:JSON.stringify({
