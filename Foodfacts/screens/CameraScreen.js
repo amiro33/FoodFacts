@@ -5,14 +5,15 @@ import { Camera, CameraView } from 'expo-camera';
 import * as FileSystem from 'expo-file-system';
 
 import foodLogo from '../assets/camera2.png';
+import { useNavigation } from '@react-navigation/native';
 
 const CameraScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const cameraRef = useRef(null);
   const [cameraUsed, setCameraUsed] = useState('back');
   const [photo, setPhoto] = useState(null);
-  const [loading,setLoading] = useState(false);
-  const [result,setResult] = useState(null);
+  const navigation = useNavigation();
+
 
   useEffect(() => {
     (async () => {
@@ -25,11 +26,10 @@ const CameraScreen = () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync({base64 :true});
       setPhoto(photo.uri);
-      analyseImage(photo.uri);
+      analyzeImage(photo.uri);
     }
   };
   const analyzeImage = async( imageUri) => {
-    setLoading(true);
     try{
       const base64 = await FileSystem.readAsStringAsync(imageUri, {encoding: "base64"});
       const response = await fetch('https://api.openai.com/v1/images/generate',{
@@ -45,11 +45,10 @@ const CameraScreen = () => {
         }),
       });
       const data = await response.json();
-      setResult(data.result || 'No data found');
+      navigation.navigate('Details',{ photo: photo.uri, result: data.result || 'No data found' });
     }catch (error) {
-      setResult('Error analysing Image')
+      navigation.navigate('Details', { photo: photo.uri, result: 'Error analyzing image' });
     }
-    setLoading(false)
   };
 
  
