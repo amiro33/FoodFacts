@@ -3,15 +3,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Button, Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Camera, CameraView } from 'expo-camera';
 import * as FileSystem from 'expo-file-system';
-import { OPENAI_API_KEY } from '@env'
-
-import foodLogo from '../assets/camera2.png';
 import { useNavigation } from '@react-navigation/native';
-
+import foodLogo from '../assets/camera2.png'
 const CameraScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const cameraRef = useRef(null);
-  const [cameraUsed, setCameraUsed] = useState('back');
   const [photo, setPhoto] = useState(null);
   const navigation = useNavigation();
 
@@ -25,34 +21,37 @@ const CameraScreen = () => {
 
   const takePicture = async () => {
     if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync({base64 :true});
+      const photo = await cameraRef.current.takePictureAsync({ base64: true });
       setPhoto(photo.uri);
       analyzeImage(photo.uri);
     }
   };
-  const analyzeImage = async( imageUri) => {
-    try{
-      const base64 = await FileSystem.readAsStringAsync(imageUri, {encoding: "base64"});
-      const response = await fetch('https://api.openai.com/v1/images/generate',{
+  const analyzeImage = async (imageUri) => {
+    console.log(process.env.EXPO_PUBLIC_OPENAI_API_KEY)
+    try {
+      console.log("Trying to analyze image...")
+      const base64 = await FileSystem.readAsStringAsync(imageUri, { encoding: "base64" });
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
-        headers:{
-          'Authorization': OPENAI_API_KEY,
-          'Content-Type' : 'application/json',
+        headers: {
+          'Authorization': `Bearer ${process.env.EXPO_PUBLIC_OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
         },
-        body:JSON.stringify({
-          model:'gpt-4-vision-preview',
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
           prompt: 'Indentify this food item and provide nutrition facts.',
-          image:base64,
+          image: base64,
         }),
       });
       const data = await response.json();
-      navigation.navigate('Details',{ photo: photo.uri, result: data.result || 'No data found' });
-    }catch (error) {
+      console.log(JSON.stringify(data));
+      navigation.navigate('Details', { photo: photo.uri, result: data.result || 'No data found' });
+    } catch (error) {
       navigation.navigate('Details', { photo: photo.uri, result: 'Error analyzing image' });
     }
   };
 
- 
+
   const logAction = () => {
     alert("Log button pressed!");
   };
@@ -76,11 +75,11 @@ const CameraScreen = () => {
   }
 
   return (
-<View style={styles.container}>
+    <View style={styles.container}>
       <CameraView facing="back" style={styles.camera} ref={cameraRef}>
         <View style={styles.buttonContainer}>
           <TouchableOpacity onPress={takePicture} style={styles.captureButton}>
-            <Image source={require(foodLogo)} style ={styles.buttonImage}>
+            <Image source={foodLogo} style={styles.buttonImage}>
             </Image>
           </TouchableOpacity>
         </View>
@@ -91,6 +90,7 @@ const CameraScreen = () => {
         </View>
       )}
     </View>
+
   );
 };
 

@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import CameraScreen from './screens/CameraScreen'; // Import your CameraScreen
 import DetailsScreen from './screens/DetailsScreen'; // 
-import { createStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { LoginScreen } from './screens/LoginScreen';
 import { LoadingScreen } from './screens/LoadingScreen';
@@ -11,10 +11,12 @@ import { AuthContext } from './context/AuthContext';
 
 
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const ScanStack = () => (
-  <Stack.Navigator>
+  <Stack.Navigator screenOptions={{
+    headerShown: false
+  }}>
     <Stack.Screen name="Scan" component={CameraScreen} />
     <Stack.Screen name="Details" component={DetailsScreen} />
   </Stack.Navigator>
