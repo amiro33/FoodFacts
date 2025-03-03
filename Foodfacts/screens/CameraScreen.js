@@ -14,8 +14,6 @@ const CameraScreen = () => {
   const [result, setResult] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-
-
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
@@ -26,9 +24,9 @@ const CameraScreen = () => {
   useFocusEffect(
     React.useCallback(() => {
       setPhoto(null);
+      setResult(null);
     }, [])
   );
-
 
   const takePicture = async () => {
     if (cameraRef.current) {
@@ -37,43 +35,40 @@ const CameraScreen = () => {
       analyzeImage(photo.uri);
     }
   };
+
   const analyzeImage = async (imageUri) => {
     try {
-      console.log("Trying to analyze image...")
+      console.log("Analyzing image...");
       const base64 = await FileSystem.readAsStringAsync(imageUri, { encoding: "base64" });
 
-      const response = await fetch('https://api.openai.com/v1/images/generations', {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer API KEY`,
+          'Authorization': `Bearer YOUR_API_KEY`,  // Replace with your actual API key
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: "gpt-4o-mini",
-          image : `data:image/jpeg;base64,${base64}`,
-          instructions: "Identify the food in this image.",
+          model: "gpt-4o",
+          messages: [
+            {
+              role: "user",
+              content: [
+                { type: "text", text: "What is in this image?" },
+                { type: "image_url", image_url: { url: `data:image/jpeg;base64,${base64}` } }
+              ]
+            }
+          ],
+          max_tokens: 300
         }),
       });
+
       const data = await response.json();
-      console.log("Food identified:", data);
-      const foodname = data.result|| "Food not found";
-      const nutritionResponse = await fetch('https://api.openai.com/v1/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer API KEY`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-4',
-          prompt: `Please provide the nutritional facts for ${foodname}.`,
-          max_tokens: 200,
-        }),
-      });
-      const nuturitionData = await nutritionResponse.json();
-      console.log("Nutritional facts:", nutritionData);
-      setResult(nutritionData.choices[0].text || "Nutrition info not available.");
+      console.log("Response:", data);
+
+      const identifiedItem = data.choices?.[0]?.message?.content?.trim() || "Could not identify the image.";
+      setResult(identifiedItem);
       setModalVisible(true);
-    } catch {
+    } catch (error) {
       console.error("Error analyzing image:", error);
       setResult("Error analyzing image.");
       setModalVisible(true);
@@ -83,23 +78,8 @@ const CameraScreen = () => {
   const closeModal = () => {
     setModalVisible(false);
     setPhoto(null);
-  }
-
-
-  const logAction = () => {
-    alert("Log button pressed!");
+    setResult(null);
   };
-
-  const statsAction = () => {
-    alert("Stats button pressed!");
-  };
-
-  const scanAction = () => {
-    alert("Scan button pressed!");
-  };
-  const signOut = () => {
-    alert('signed out');
-  }
 
   if (hasPermission === null) {
     return <View />;
@@ -118,7 +98,7 @@ const CameraScreen = () => {
         </View>
       </CameraView>
 
-      {/* Popup Modal for Details */}
+      {/* Popup Modal for Image Analysis Result */}
       <Modal
         visible={modalVisible}
         animationType="slide"
@@ -127,7 +107,7 @@ const CameraScreen = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.title}>Food Result</Text>
+            <Text style={styles.title}>Image Analysis Result</Text>
 
             {photo && <Image source={{ uri: photo }} style={styles.image} />}
             <Text style={styles.resultText}>{result || 'No result available'}</Text>
