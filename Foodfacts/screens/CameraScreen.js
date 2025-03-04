@@ -1,11 +1,44 @@
 // screens/CameraScreen.js
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Button, Image, StyleSheet, Text, TouchableOpacity, Modal } from 'react-native';
-import { Camera, CameraView } from 'expo-camera';
-import * as FileSystem from 'expo-file-system';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import foodLogo from '../assets/camera2.png';
+import React, { useState, useEffect, useRef } from "react";
+import {
+  View,
+  Button,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Modal,
+} from "react-native";
+import { Camera, CameraView } from "expo-camera";
+import * as FileSystem from "expo-file-system";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import foodLogo from "../assets/camera2.png";
 
+const prompt = `
+  You are to recognize a food (may be prepared, or may be an individual ingredient) and provide an ingredients list based on what is visible in the picture. For the next messages, please respond in JSON only, using this format:
+
+  {
+    "success": true,
+    "ingredients": [
+      {
+        "quantity": "8 oz",
+        "description": "Peanut Butter",
+        "confidence": "high"
+      },
+      {
+        "quantity": "1 tsp",
+        "description": "Salt",
+        "confidence": "low"
+      }
+    ],
+    "description": "Peanut Butter Sandwich"
+  }
+
+  Rules for Confidence Levels:
+
+      High confidence → Clearly visible ingredients (e.g., a chicken breast, tomato slices, avocado).
+      Medium confidence → Partially visible or inferred based on common preparation (e.g., lettuce under a bun, sauce spread on bread).
+      Low confidence → Ingredients that are usually present but not visible (e.g., seasoning, marinade, oil used for cooking`;
 
 const CameraScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -17,7 +50,7 @@ const CameraScreen = () => {
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
+      setHasPermission(status === "granted");
     })();
   }, []);
 
@@ -25,7 +58,7 @@ const CameraScreen = () => {
     React.useCallback(() => {
       setPhoto(null);
       setResult(null);
-    }, [])
+    }, []),
   );
 
   const takePicture = async () => {
@@ -39,33 +72,43 @@ const CameraScreen = () => {
   const analyzeImage = async (imageUri) => {
     try {
       console.log("Analyzing image...");
-      const base64 = await FileSystem.readAsStringAsync(imageUri, { encoding: "base64" });
-
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer YOUR_API_KEY`,  // Replace with your actual API key
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: "gpt-4o",
-          messages: [
-            {
-              role: "user",
-              content: [
-                { type: "text", text: "What is in this image?" },
-                { type: "image_url", image_url: { url: `data:image/jpeg;base64,${base64}` } }
-              ]
-            }
-          ],
-          max_tokens: 300
-        }),
+      const base64 = await FileSystem.readAsStringAsync(imageUri, {
+        encoding: "base64",
       });
+
+      const response = await fetch(
+        "https://api.openai.com/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.EXPO_PUBLIC_OPENAI_API_KEY}`, // Replace with your actual API key
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "gpt-4o",
+            messages: [
+              {
+                role: "user",
+                content: [
+                  { type: "text", text: prompt },
+                  {
+                    type: "image_url",
+                    image_url: { url: `data:image/jpeg;base64,${base64}` },
+                  },
+                ],
+              },
+            ],
+            max_tokens: 300,
+          }),
+        },
+      );
 
       const data = await response.json();
       console.log("Response:", data);
 
-      const identifiedItem = data.choices?.[0]?.message?.content?.trim() || "Could not identify the image.";
+      const identifiedItem =
+        data.choices?.[0]?.message?.content?.trim() ||
+        "Could not identify the image.";
       setResult(identifiedItem);
       setModalVisible(true);
     } catch (error) {
@@ -110,7 +153,9 @@ const CameraScreen = () => {
             <Text style={styles.title}>Image Analysis Result</Text>
 
             {photo && <Image source={{ uri: photo }} style={styles.image} />}
-            <Text style={styles.resultText}>{result || 'No result available'}</Text>
+            <Text style={styles.resultText}>
+              {result || "No result available"}
+            </Text>
 
             <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
               <Text style={styles.closeButtonText}>Close</Text>
@@ -128,16 +173,16 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     padding: 20,
   },
   captureButton: {
     padding: 10,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   buttonImage: {
     width: 50,
@@ -145,43 +190,43 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dark background overlay
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Dark background overlay
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
-    alignItems: 'center',
-    width: '80%',
+    alignItems: "center",
+    width: "80%",
   },
   title: {
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   image: {
     width: 200,
     height: 200,
     borderRadius: 10,
-    resizeMode: 'contain',
+    resizeMode: "contain",
     marginBottom: 10,
   },
   resultText: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 20,
   },
   closeButton: {
     paddingVertical: 10,
     paddingHorizontal: 20,
-    backgroundColor: '#007BFF',
+    backgroundColor: "#007BFF",
     borderRadius: 5,
   },
   closeButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
   },
 });
 
