@@ -1,4 +1,3 @@
-
 import { DataSource } from 'typeorm';
 
 export const databaseProviders = [
@@ -8,9 +7,7 @@ export const databaseProviders = [
       const dataSource = new DataSource({
         type: 'sqlite',
         database: './database.db',
-        entities: [
-            __dirname + '/../**/*.entity{.ts,.js}',
-        ],
+        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
         synchronize: true,
       });
 
@@ -19,9 +16,8 @@ export const databaseProviders = [
   },
 ];
 
-
-import { Module } from '@nestjs/common';
-
+import { Global, Module } from '@nestjs/common';
+@Global()
 @Module({
   providers: [...databaseProviders],
   exports: [...databaseProviders],

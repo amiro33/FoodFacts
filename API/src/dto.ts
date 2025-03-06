@@ -7,3 +7,7 @@ export class CreateFoodItemDto {
 export class CreateCategoryDto {
   readonly name: string;
 }
+
+export class BatchSearchDto {
+  readonly foods: Array<string>;
+}
