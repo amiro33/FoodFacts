@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateFoodItemDto } from 'src/dto';
+import { ConfigService } from '@nestjs/config';
+import { CreateFoodItemDto, FDCGetResponse, FDCItem } from 'src/dto';
 import { Category } from 'src/entities/category.entity';
 import { FoodItem } from 'src/entities/food_item.entity';
 import { Like, Repository } from 'typeorm';
@@ -12,6 +13,8 @@ export class FoodFactsService {
 
     @Inject('CATEGORY_REPOSITORY')
     private categoryRepository: Repository<Category>,
+
+    private configService: ConfigService,
   ) {}
   async createFood(food: CreateFoodItemDto) {
     const item = this.foodItemRepository.create(food);
@@ -20,6 +23,18 @@ export class FoodFactsService {
   async createCategory(name: string) {
     const cat = this.categoryRepository.create({ name });
     return await this.categoryRepository.save(cat);
+  }
+  async batchFoodSearch(searchTerms: Array<string>) {
+    console.log('Batch Search');
+    const response: Array<FDCItem> = [];
+    for (const term of searchTerms) {
+      const searchUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(term)}&api_key=${this.configService.get('FDC_API_KEY')}&pageSize=10`;
+      const req = await fetch(searchUrl);
+      const res: FDCGetResponse = await req.json();
+      const topResult = res.foods[0];
+      response.push(topResult);
+    }
+    return response;
   }
   async getCategories() {
     return await this.foodItemRepository.find();

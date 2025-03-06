@@ -16,16 +16,7 @@ export class FoodFactsController {
   }
   @Post('batchSearch')
   async searchFoodBatch(@Body() batchSearch: BatchSearchDto) {
-    console.log('Batch Search');
-    const response = [];
-    for (const term of batchSearch.foods) {
-      const searchUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(term)}&api_key=${this.configService.get('FDC_API_KEY')}&pageSize=10`;
-      // const searchUrl = `https://world.openfoodfacts.org/api/v2/search?categories_tags_en=${encodeURIComponent(term)}&nutrition_grades_tags=c&unique_scans_n_gt=100&fields=product_name,nutriments,categories,unique_scans_n&lc=en`;
-
-      const req = await fetch(searchUrl);
-      const res = await req.json();
-      console.log(res);
-    }
+    return await this.foodFactsService.batchFoodSearch(batchSearch.foods);
   }
   @Get('')
   async getAllFoods() {
