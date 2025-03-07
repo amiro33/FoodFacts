@@ -38,6 +38,7 @@ export const LoginScreen = () => {
   };
 
   const logIn = async () => {
+    console.warn(username, password);
     try {
     console.log("logIn");
     if (username == "" || password == "") Alert.alert("idk");
@@ -127,6 +128,7 @@ export const LoginScreen = () => {
           <Button
             title="bypass it mwahaha"
             onPress={() => {
+              console.log("Hello Wordl")
               authContext.login({ username, token: "demodemodemo" });
             }}
           />
