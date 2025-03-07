@@ -37,7 +37,7 @@ export class FoodFactsService {
       const nutrients = topResult.foodNutrients.filter(({nutrientName}: FoodNutrient) => nutrientName.includes("Energy") || nutrientName.includes("Fat") || nutrientName.includes('Carbohydrate') || nutrientName.includes('Protein'))
       newItem.nutrients = nutrients;
       newItem.additionalInfo = topResult.brandName
-      response.push()
+      response.push(newItem)
     }
     return response;
   }
