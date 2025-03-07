@@ -1,3 +1,5 @@
+import { ApiProperty, ApiSchema } from "@nestjs/swagger";
+
 export class CreateFoodItemDto {
   readonly name: string;
   readonly barCode: string;
@@ -5,10 +7,17 @@ export class CreateFoodItemDto {
 }
 
 export class CreateCategoryDto {
+  @ApiProperty()
   readonly name: string;
 }
 
 export class BatchSearchDto {
+  @ApiProperty({
+    example: [
+      "Orange Juice",
+      "Ground Beef"
+    ]
+  })
   readonly foods: Array<string>;
 }
 export class FDCGetResponse {
@@ -22,6 +31,15 @@ export class FDCItem {
   readonly brandName: string;
   readonly foodCategory: string;
   readonly servingSize: string;
+}
+@ApiSchema({
+  description: "Properties used to sign in and sign out of the app."
+})
+export class AuthDto {
+  @ApiProperty()
+  readonly username: string;
+  @ApiProperty()
+  readonly password: string;
 }
 // description: 'ORANGE JUICE',
 // dataType: 'Branded',

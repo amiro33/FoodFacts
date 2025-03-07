@@ -4,6 +4,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { LocalAuthGuard } from "./local.guard";
 import { JwtAuthGuard } from "./jwt.guard";
 import { UsersService } from "src/users/users.service";
+import { AuthDto } from "src/dto";
 
 @Controller("auth")
 export class AuthController {
@@ -13,7 +14,7 @@ export class AuthController {
   ) {
   }
   @Post("")
-  async createUser(@Body() { username, password }) {
+  async createUser(@Body() {username, password}: AuthDto) {
     return await this.authService.createUser(username, password);
   }
   // @Get("")
