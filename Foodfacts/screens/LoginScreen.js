@@ -18,7 +18,8 @@ export const LoginScreen = () => {
   const [password, setPassword] = useState("");
 
   const createAccount = async () => {
-    if (username == "" || password == "") Alert.alert("idk");
+    try {
+    if (username === "" || password === "") Alert.alert("idk");
     const req = await fetch("http://3.17.79.194:3000/auth/", {
       method: "POST",
       headers: {
@@ -31,9 +32,14 @@ export const LoginScreen = () => {
       authContext.login(res.user);
       Alert.alert("New Account Created");
     }
+  } catch(e) {
+    console.log(e)
+  }
   };
 
   const logIn = async () => {
+    try {
+    console.log("logIn");
     if (username == "" || password == "") Alert.alert("idk");
     const req = await fetch("http://3.17.79.194:3000/auth/login", {
       method: "POST",
@@ -50,6 +56,9 @@ export const LoginScreen = () => {
       authContext.login({ username, token: res.access_token });
       Alert.alert(username + "Log in Successfull");
     }
+  } catch(e) {
+    console.log(e)
+  }
   };
 
   const styles = StyleSheet.create({
@@ -102,13 +111,13 @@ export const LoginScreen = () => {
         <TextInput
           style={styles.input}
           value={username}
-          onChangeText={setUsername}
+          onChangeText={(text) => setUsername(text)}
           placeholder="Username"
         />
         <TextInput
           style={styles.input}
           value={password}
-          onChangeText={setPassword}
+          onChangeText={(text) => setPassword(text)}
           placeholder="Password"
           secureTextEntry
         />
