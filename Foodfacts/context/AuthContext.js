@@ -5,6 +5,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [completedLogIn, setCompletedLogIn] = useState(false)
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -16,6 +17,8 @@ export const AuthProvider = ({ children }) => {
     };
     loadUser();
   }, []);
+  useEffect(() => {
+  }, [])
 
   const login = async (userData) => {
     setUser(userData);
@@ -25,10 +28,14 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     setUser(null);
     await AsyncStorage.removeItem('user');
+    setCompletedLogIn(false)
   };
+  const completeLogIn = () => {
+    setCompletedLogIn(true)
+  }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, completedLogIn, completeLogIn, loading }}>
       {children}
     </AuthContext.Provider>
   );

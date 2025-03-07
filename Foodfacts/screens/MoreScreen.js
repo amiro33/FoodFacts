@@ -6,7 +6,7 @@ const MoreScreen = () => {
     const authContext = useContext(AuthContext);
     return (
         <View>
-            <Text>More</Text>
+            <Text>Logged in as {authContext.user.username}</Text>
             <Button title="Sign Out" onPress={() => authContext.logout()} />
         </View>
     )

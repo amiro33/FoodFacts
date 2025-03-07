@@ -9,14 +9,14 @@ import {
   Alert,
 } from "react-native";
 import { AuthContext } from "../context/AuthContext";
-
+import { useNavigation } from "@react-navigation/native";
 import foodLogo from "../assets/Foodfactslogo.png";
 
 export const LoginScreen = () => {
   const authContext = useContext(AuthContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
+  const navigation = useNavigation();
   const createAccount = async () => {
     try {
     if (username === "" || password === "") Alert.alert("idk");
@@ -27,10 +27,9 @@ export const LoginScreen = () => {
       },
       body: JSON.stringify({ username, password }),
     });
-    const res = await req.json();
-    if (res.success) {
-      authContext.login(res.user);
-      Alert.alert("New Account Created");
+    if (req.ok) {
+      await logIn()
+      navigation.navigate('accountDetails');
     }
   } catch(e) {
     console.log(e)
@@ -51,12 +50,11 @@ export const LoginScreen = () => {
     });
     const res = await req.json();
 
-    console.log;
-
     if (res.access_token) {
       authContext.login({ username, token: res.access_token });
-      Alert.alert(username + "Log in Successfull");
+      Alert.alert("Log in Successful");
     }
+
   } catch(e) {
     console.log(e)
   }
