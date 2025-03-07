@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { FoodFactsService } from './food-facts.service';
-import { BatchSearchDto, CreateCategoryDto, CreateFoodItemDto } from 'src/dto';
+import { BatchSearchDto, CreateCategoryDto, CreateFoodItemDto, FoodFactsItem } from 'src/dto';
 import { ConfigService } from '@nestjs/config';
 
 @Controller('food-facts')
@@ -10,12 +10,12 @@ export class FoodFactsController {
     private readonly configService: ConfigService,
   ) {}
 
-  @Get('search')
+  @Get('alternatives')
   async searchFood(@Query('q') searchTerm: string) {
     return await this.foodFactsService.searchFoods(searchTerm);
   }
   @Post('batchSearch')
-  async searchFoodBatch(@Body() batchSearch: BatchSearchDto) {
+  async searchFoodBatch(@Body() batchSearch: BatchSearchDto): Promise<FoodFactsItem[]> {
     return await this.foodFactsService.batchFoodSearch(batchSearch.foods);
   }
   @Get('')

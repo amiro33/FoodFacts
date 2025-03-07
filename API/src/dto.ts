@@ -15,8 +15,8 @@ export class BatchSearchDto {
   @ApiProperty({
     example: [
       "Orange Juice",
-      "Ground Beef"
-    ]
+      "Ground Beef",
+    ],
   })
   readonly foods: Array<string>;
 }
@@ -32,14 +32,44 @@ export class FDCItem {
   readonly foodCategory: string;
   readonly servingSize: string;
 }
+
 @ApiSchema({
-  description: "Properties used to sign in and sign out of the app."
+  description: "Properties used to sign in and sign out of the app.",
 })
 export class AuthDto {
   @ApiProperty()
   readonly username: string;
   @ApiProperty()
   readonly password: string;
+}
+//TODO: maybe move this into its own database entry?
+export class FoodFactsItem {
+  @ApiProperty()
+  fdcId: string;
+  @ApiProperty()
+  description: string;
+  @ApiProperty()
+  nutrients: Array<FoodNutrient>;
+  @ApiProperty()
+  servingSize: string;
+  @ApiProperty() additionalInfo: string;
+}
+export class FoodNutrient {
+  nutrientId: number;
+  nutrientName: string;
+  nutrientNumber: string;
+  unitName: string;
+  derivationCode: string;
+  derivationDescription: string;
+  derivationId: number;
+  value: number;
+  foodNutrientSourceId: number;
+  foodNutrientSourceCode: string;
+  foodNutrientSourceDescription: string;
+  rank: string;
+  indentLevel: number;
+  foodNutrientId: number;
+  percentDailyValue: number;
 }
 // description: 'ORANGE JUICE',
 // dataType: 'Branded',
