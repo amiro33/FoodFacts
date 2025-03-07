@@ -55,20 +55,34 @@ export class FoodFactsItem {
   @ApiProperty() additionalInfo: string;
 }
 export class FoodNutrient {
+  @ApiProperty()
   nutrientId: number;
+  @ApiProperty()
   nutrientName: string;
+  @ApiProperty()
   nutrientNumber: string;
+  @ApiProperty()
   unitName: string;
+  @ApiProperty()
   derivationCode: string;
+  @ApiProperty()
   derivationDescription: string;
+  @ApiProperty()
   derivationId: number;
+  @ApiProperty()
   value: number;
   foodNutrientSourceId: number;
+  @ApiProperty()
   foodNutrientSourceCode: string;
+  @ApiProperty()
   foodNutrientSourceDescription: string;
+  @ApiProperty()
   rank: string;
+  @ApiProperty()
   indentLevel: number;
+  @ApiProperty()
   foodNutrientId: number;
+  @ApiProperty()
   percentDailyValue: number;
 }
 // description: 'ORANGE JUICE',
