@@ -123,8 +123,8 @@ export const LoginScreen = () => {
           secureTextEntry
         />
         <View style={styles.buttonContainer}>
-          <Button title="Log In" onPress={() => logIn} />
-          <Button title="Create Account" onPress={() => createAccount} />
+          <Button title="Log In" onPress={() => logIn().then()} />
+          <Button title="Create Account" onPress={() => createAccount().then()} />
           <Button
             title="bypass it mwahaha"
             onPress={() => {
