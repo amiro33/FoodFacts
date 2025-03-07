@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View, TextInput, Text, Button } from 'react-native';
 import { GlobalStyles } from '../GlobalStyles'; 
-import RNPickerSelect from 'react-native-picker-select';
+// import RNPickerSelect from 'react-native-picker-select';
 
 export const CreateAccountAdditionalInfo = () => {
     const [sex, setSex] = useState("")
@@ -11,17 +11,15 @@ export const CreateAccountAdditionalInfo = () => {
     return (
         <View style={GlobalStyles.container}>
             <Text style={GlobalStyles.heading}>Let's confirm a few things...</Text>
-            <RNPickerSelect
+            {/* <RNPickerSelect
       onValueChange={(value) => console.log(value)}
       items={[
         { label: 'Sex', value: '' },
         { label: 'Male', value: 'male' },
         { label: 'Female', value: 'female' },
         { label: 'Prefer not to say', value: 'n/a' },
-
-        
       ]}
-    />
+    /> */}
             <TextInput
                 // style={styles.input}
                 value={age}

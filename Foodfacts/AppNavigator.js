@@ -29,12 +29,12 @@ const AppNavigator = () => {
   return (
     
     <NavigationContainer>
-      {completedLogIn ? <Tab.Navigator initialRouteName={user ? "accountDetails" : "createAccount"}>
+      {completedLogIn ? <Tab.Navigator initialRouteName='Scan'>
         <Tab.Screen name="Log" component={LogScreen} />
         <Tab.Screen name="Stats" component={StatsScreen} />
         <Tab.Screen name="Scan" component={CameraScreen} />
         <Tab.Screen name="More" component={MoreScreen} />
-      </Tab.Navigator> : <CreateAccountStack />}
+      </Tab.Navigator> : <CreateAccountStack initialRouteName={user ? "accountDetails" : "createAccount"}/>}
     </NavigationContainer>
   );
 };

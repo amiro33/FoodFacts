@@ -128,6 +128,7 @@ export const LoginScreen = () => {
             onPress={() => {
               console.log("Hello Wordl")
               authContext.login({ username, token: "demodemodemo" });
+              authContext.completeLogIn();
             }}
           />
         </View>
