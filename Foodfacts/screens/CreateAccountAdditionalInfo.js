@@ -18,11 +18,11 @@ export const CreateAccountAdditionalInfo = () => {
 
   const updateDetails = async () => {
     try {
-      console.log("UpdateDetails");
+      console.log("UpdateDetails" + user.token);
       const req = await fetch(`${process.env.EXPO_PUBLIC_SERVER_URL}/users`, {
         method: "PATCH",
         headers: {
-          Authorization: `Bearer ${user.access_token}`,
+          Authorization: `Bearer ${user.token}`,
         },
         body: JSON.stringify({
           name,
@@ -33,6 +33,8 @@ export const CreateAccountAdditionalInfo = () => {
           height,
         }),
       });
+      console.log("req sent")
+      console.log(req)
       if (req.ok) setCompletedLogin(true);
     } catch (e) {
       alert(e);
@@ -42,15 +44,15 @@ export const CreateAccountAdditionalInfo = () => {
     <View style={GlobalStyles.container}>
       <Text style={GlobalStyles.heading}>Let's confirm a few things...</Text>
       <TextInput
-        style={styles.input}
-        value={age}
-        onChangeText={(text) => setAge(text)}
+        style={GlobalStyles.input}
+        value={name}
+        onChangeText={(text) => setName(text)}
         placeholder="Name"
       />
       <TextInput
         style={GlobalStyles.input}
-        value={age}
-        onChangeText={(text) => setAge(text)}
+        value={lastName}
+        onChangeText={(text) => setLastName(text)}
         placeholder="Last Name"
       />
       <Text>Sex:</Text>
@@ -63,24 +65,24 @@ export const CreateAccountAdditionalInfo = () => {
         <Picker.Item label="N/A" value="n/a" />
       </Picker>
       <TextInput
-        // style={styles.input}
+        style={GlobalStyles.input}
         value={age}
         onChangeText={(text) => setAge(text)}
         placeholder="Age"
       />
       <TextInput
-        // style={styles.input}
+        style={GlobalStyles.input}
         value={weight}
         onChangeText={(text) => setWeight(text)}
         placeholder="Weight"
       />
       <TextInput
-        // style={styles.input}
+        style={GlobalStyles.input}
         value={height}
         onChangeText={(text) => setHeight(text)}
         placeholder="Height"
       />
-      <Button title="Confirm Details" onClick={() => console.log("IDK")} />
+      <Button title="Confirm Details" onPress={() => updateDetails().then()} />
     </View>
   );
 };
