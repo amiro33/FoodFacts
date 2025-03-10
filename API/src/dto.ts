@@ -1,4 +1,4 @@
-import { ApiProperty, ApiSchema } from "@nestjs/swagger";
+import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 
 export class CreateFoodItemDto {
   readonly name: string;
@@ -13,10 +13,7 @@ export class CreateCategoryDto {
 
 export class BatchSearchDto {
   @ApiProperty({
-    example: [
-      "Orange Juice",
-      "Ground Beef",
-    ],
+    example: ['Orange Juice', 'Ground Beef'],
   })
   readonly foods: Array<string>;
 }
@@ -34,7 +31,7 @@ export class FDCItem {
 }
 
 @ApiSchema({
-  description: "Properties used to sign in and sign out of the app.",
+  description: 'Properties used to sign in and sign out of the app.',
 })
 export class AuthDto {
   @ApiProperty()
@@ -84,6 +81,20 @@ export class FoodNutrient {
   foodNutrientId: number;
   @ApiProperty()
   percentDailyValue: number;
+}
+@ApiSchema({
+  description:
+    'Data must be in American units (but can be converted/shown in other ways in the frontend.',
+})
+export class AdditionalUserPropsDTO {
+  @ApiProperty()
+  sex: string;
+  @ApiProperty()
+  age: number;
+  @ApiProperty()
+  weight: number;
+  @ApiProperty()
+  height: number;
 }
 // description: 'ORANGE JUICE',
 // dataType: 'Branded',

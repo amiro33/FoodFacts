@@ -1,6 +1,12 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { FoodFactsService } from './food-facts.service';
-import { BatchSearchDto, CreateCategoryDto, CreateFoodItemDto, FoodFactsItem, FoodNutrient } from 'src/dto';
+import {
+  BatchSearchDto,
+  CreateCategoryDto,
+  CreateFoodItemDto,
+  FoodFactsItem,
+  FoodNutrient,
+} from 'src/dto';
 import { ConfigService } from '@nestjs/config';
 import { ApiExtraModels, ApiResponse } from '@nestjs/swagger';
 @ApiExtraModels(FoodNutrient)
@@ -17,7 +23,9 @@ export class FoodFactsController {
   }
   @Post('batchSearch')
   @ApiResponse({ status: 200, type: [FoodFactsItem] }) // Ensures proper schema exposure
-  async searchFoodBatch(@Body() batchSearch: BatchSearchDto): Promise<FoodFactsItem[]> {
+  async searchFoodBatch(
+    @Body() batchSearch: BatchSearchDto,
+  ): Promise<FoodFactsItem[]> {
     return await this.foodFactsService.batchFoodSearch(batchSearch.foods);
   }
   @Get('')
@@ -26,7 +34,6 @@ export class FoodFactsController {
   }
   @Post('')
   async createFoodItem(@Body() createFoodItemDto: CreateFoodItemDto) {
-    console.log(createFoodItemDto);
     return this.foodFactsService.createFood(createFoodItemDto);
   }
   @Get('categories')
@@ -35,7 +42,6 @@ export class FoodFactsController {
   }
   @Post('categories')
   async createCategory(@Body() createCategoryDto: CreateCategoryDto) {
-    console.log(createCategoryDto);
     return await this.foodFactsService.createCategory(createCategoryDto.name);
   }
 }

@@ -1,6 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { CreateFoodItemDto, FDCGetResponse, FDCItem, FoodFactsItem, FoodNutrient } from 'src/dto';
+import {
+  CreateFoodItemDto,
+  FDCGetResponse,
+  FDCItem,
+  FoodFactsItem,
+  FoodNutrient,
+} from 'src/dto';
 import { Category } from 'src/entities/category.entity';
 import { FoodItem } from 'src/entities/food_item.entity';
 import { Like, Repository } from 'typeorm';
@@ -25,7 +31,6 @@ export class FoodFactsService {
     return await this.categoryRepository.save(cat);
   }
   async batchFoodSearch(searchTerms: Array<string>): Promise<FoodFactsItem[]> {
-    console.log('Batch Search');
     const response: Array<FoodFactsItem> = [];
     for (const term of searchTerms) {
       const searchUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(term)}&api_key=${this.configService.get('FDC_API_KEY')}&pageSize=10`;
@@ -34,10 +39,16 @@ export class FoodFactsService {
       const topResult = res.foods[0];
       const newItem = new FoodFactsItem();
       Object.assign(newItem, topResult);
-      const nutrients = topResult.foodNutrients.filter(({nutrientName}: FoodNutrient) => nutrientName.includes("Energy") || nutrientName.includes("Fat") || nutrientName.includes('Carbohydrate') || nutrientName.includes('Protein'))
+      const nutrients = topResult.foodNutrients.filter(
+        ({ nutrientName }: FoodNutrient) =>
+          nutrientName.includes('Energy') ||
+          nutrientName.includes('Fat') ||
+          nutrientName.includes('Carbohydrate') ||
+          nutrientName.includes('Protein'),
+      );
       newItem.nutrients = nutrients;
-      newItem.additionalInfo = topResult.brandName
-      response.push(newItem)
+      newItem.additionalInfo = topResult.brandName;
+      response.push(newItem);
     }
     return response;
   }
