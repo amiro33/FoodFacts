@@ -1,10 +1,15 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet } from "react-native";
 
 export const GlobalStyles = StyleSheet.create({
-    heading: {
-        fontSize: 14,
-    },
-    container: {
-        padding: 4
-    }
-})
+  heading: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  container: {
+    padding: 8,
+  },
+  input: {
+    borderStyle: "solid",
+    borderColor: "black",
+  },
+});

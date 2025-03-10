@@ -1,15 +1,15 @@
 import { useContext } from "react";
 import { Button, Text, View } from "react-native";
-import { AuthContext } from "../context/AuthContext";
+import { UserContext } from "../context/UserContext";
 
 const MoreScreen = () => {
-    const authContext = useContext(AuthContext);
-    return (
-        <View>
-            <Text>Logged in as {authContext.user.username}</Text>
-            <Button title="Sign Out" onPress={() => authContext.logout()} />
-        </View>
-    )
-}
+  const userContext = useContext(UserContext);
+  return (
+    <View>
+      <Text>Logged in as {userContext.user.username}</Text>
+      <Button title="Sign Out" onPress={() => userContext.logout()} />
+    </View>
+  );
+};
 
-export default MoreScreen; 
+export default MoreScreen;

@@ -8,56 +8,58 @@ import {
   Image,
   Alert,
 } from "react-native";
-import { AuthContext } from "../context/AuthContext";
+import { UserContext } from "../context/UserContext";
 import { useNavigation } from "@react-navigation/native";
 import foodLogo from "../assets/Foodfactslogo.png";
 
 export const LoginScreen = () => {
-  const authContext = useContext(AuthContext);
+  const authContext = useContext(UserContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigation = useNavigation();
   const createAccount = async () => {
     try {
-    if (username === "" || password === "") Alert.alert("idk");
-    const req = await fetch("http://3.17.79.194:3000/auth/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    });
-    if (req.ok) {
-      await logIn()
-      navigation.navigate('accountDetails');
+      if (username === "" || password === "") Alert.alert("idk");
+      const req = await fetch(`${process.env.EXPO_PUBLIC_SERVER_URL}/auth/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+      if (req.ok) {
+        await logIn();
+        navigation.navigate("accountDetails");
+      }
+    } catch (e) {
+      console.log(e);
     }
-  } catch(e) {
-    console.log(e)
-  }
   };
 
   const logIn = async () => {
     console.warn(username, password);
     try {
-    console.log("logIn");
-    if (username == "" || password == "") Alert.alert("idk");
-    const req = await fetch("http://3.17.79.194:3000/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    });
-    const res = await req.json();
+      console.log("logIn");
+      if (username == "" || password == "") Alert.alert("idk");
+      const req = await fetch(
+        `${process.env.EXPO_PUBLIC_SERVER_URL}/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+        },
+      );
+      const res = await req.json();
 
-    if (res.access_token) {
-      authContext.login({ username, token: res.access_token });
-      Alert.alert("Log in Successful");
+      if (res.access_token) {
+        authContext.login({ username, token: res.access_token });
+        Alert.alert("Log in Successful");
+      }
+    } catch (e) {
+      console.log(e);
     }
-
-  } catch(e) {
-    console.log(e)
-  }
   };
 
   const styles = StyleSheet.create({
@@ -122,11 +124,14 @@ export const LoginScreen = () => {
         />
         <View style={styles.buttonContainer}>
           <Button title="Log In" onPress={() => logIn().then()} />
-          <Button title="Create Account" onPress={() => createAccount().then()} />
+          <Button
+            title="Create Account"
+            onPress={() => createAccount().then()}
+          />
           <Button
             title="bypass it mwahaha"
             onPress={() => {
-              console.log("Hello Wordl")
+              console.log("Hello Wordl");
               authContext.login({ username, token: "demodemodemo" });
               authContext.completeLogIn();
             }}
