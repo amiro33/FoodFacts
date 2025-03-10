@@ -22,7 +22,8 @@ export const CreateAccountAdditionalInfo = () => {
       const req = await fetch(`${process.env.EXPO_PUBLIC_SERVER_URL}/users`, {
         method: "PATCH",
         headers: {
-          Authorization: `Bearer ${user.token}`,
+          'Authorization': `Bearer ${user.token}`,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           name,
@@ -36,6 +37,7 @@ export const CreateAccountAdditionalInfo = () => {
       console.log("req sent")
       console.log(req)
       if (req.ok) setCompletedLogin(true);
+      console.log(await req.text())
     } catch (e) {
       alert(e);
     }

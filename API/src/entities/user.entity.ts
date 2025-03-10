@@ -23,6 +23,12 @@ export class User {
 
   @Column({ type: 'integer', nullable: true })
   height: number;
+
+  @Column({type: 'text', nullable: true})
+  first_name: string;
+
+  @Column({type: 'text', nullable: true})
+  last_name: string;
 }
 
 import { DataSource } from 'typeorm';
