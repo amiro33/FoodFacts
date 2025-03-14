@@ -18,8 +18,8 @@ export const CreateAccountAdditionalInfo = () => {
 
   const updateDetails = async () => {
     const body = JSON.stringify({
-      name,
-      lastName,
+      first_name,
+      last_name,
       sex,
       age,
       weight,
