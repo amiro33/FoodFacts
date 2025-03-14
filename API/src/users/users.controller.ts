@@ -23,6 +23,7 @@ export class UsersController {
     @Req() req,
     @Body() additionalUserPropsDTO: AdditionalUserPropsDTO,
   ) {
+    console.log("updateUser")
     return await this.usersService.updateAdditionalProperties(
       req.user.userId,
       additionalUserPropsDTO,

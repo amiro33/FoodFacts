@@ -12,10 +12,9 @@ export class UsersService {
     id: number,
     newProps: AdditionalUserPropsDTO,
   ) {
-    await this.userRepository.query('PRAGMA foreign_keys = ON;'); // (For SQLite)
     console.log(newProps)
-    const nu = await this.userRepository.update(id, newProps);
-    console.log(await this.findOneById(id));
+    await this.userRepository.update(id, newProps);
+    return await this.findOneById(id);
   }
   async findOneById(id: number): Promise<User | null> {
     return this.userRepository.findOne({ where: { id } });
