@@ -39,7 +39,7 @@ export const CreateAccountAdditionalInfo = () => {
       console.log("req sent")
       console.log(req)
       if (req.ok) setCompletedLogin(true);
-      console.log(await req.text())
+      console.log("TEXT", await req.text())
     } catch (e) {
       alert(e);
     }
