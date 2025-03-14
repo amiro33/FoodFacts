@@ -95,6 +95,10 @@ export class AdditionalUserPropsDTO {
   weight: number;
   @ApiProperty()
   height: number;
+  @ApiProperty()
+  name: string;
+  @ApiProperty()
+  lastName: string;
 }
 // description: 'ORANGE JUICE',
 // dataType: 'Branded',

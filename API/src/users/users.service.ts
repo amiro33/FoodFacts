@@ -12,20 +12,22 @@ export class UsersService {
     id: number,
     newProps: AdditionalUserPropsDTO,
   ) {
-    await this.userRepository.update(id, {
-      ...newProps,
-    });
+    await this.userRepository.query('PRAGMA foreign_keys = ON;'); // (For SQLite)
+    console.log(newProps)
+    const nu = await this.userRepository.update(id, newProps);
+    console.log(await this.findOneById(id));
   }
   async findOneById(id: number): Promise<User | null> {
     return this.userRepository.findOne({ where: { id } });
   }
   async findOne(username: string): Promise<User | null> {
-    return this.userRepository.findOne({ where: { username } });
+    return this.userRepository.findOne({ where: { username }, select: {password: true, sex: true} });
   }
   async findOneForLogin(username: string) {
     return this.userRepository.findOne({
       where: { username },
       select: {
+        id: true,
         username: true,
         password: true,
       },

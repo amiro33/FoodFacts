@@ -17,6 +17,15 @@ export const CreateAccountAdditionalInfo = () => {
   const { user, setCompletedLogin } = useContext(UserContext);
 
   const updateDetails = async () => {
+    const body = JSON.stringify({
+      name,
+      lastName,
+      sex,
+      age,
+      weight,
+      height,
+    });
+    console.log(body)
     try {
       console.log("UpdateDetails" + user.token);
       const req = await fetch(`${process.env.EXPO_PUBLIC_SERVER_URL}/users`, {
@@ -25,14 +34,7 @@ export const CreateAccountAdditionalInfo = () => {
           'Authorization': `Bearer ${user.token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          name,
-          lastName,
-          sex,
-          age,
-          weight,
-          height,
-        }),
+        body,
       });
       console.log("req sent")
       console.log(req)

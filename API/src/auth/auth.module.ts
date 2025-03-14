@@ -19,7 +19,7 @@ import { userProviders } from 'src/entities/user.entity';
       inject: [ConfigService], // Inject ConfigService
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'), // Use ConfigService
-        signOptions: { expiresIn: '60s' },
+        signOptions: { expiresIn: '30d' },
       }),
     }),
   ],
