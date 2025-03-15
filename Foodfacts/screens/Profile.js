@@ -1,20 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { GlobalStyles } from '../GlobalStyles';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { Picker } from '@react-native-picker/picker';  // Updated import
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UserContext } from '../context/UserContext'; 
 
 export const Profile = ({ route }) => {
-    const { weight = 199.8, height = 5.9, sex = "male", age = 30, activityFactor = "sedentary", goal = "loss" } = route.params || {}; 
-    const username = "John Doe"; 
+    const { user, loading } = useContext(UserContext);
+    const { weight = 199.8, height = 5.9, sex = 'male', age = 30 } = user || {}; 
+
+    const [activityFactor, setActivityFactor] = useState("sedentary");
+    const [goal, setGoal] = useState("loss");
     const [bmi, setBmi] = useState(null);
     const [goals, setGoals] = useState({});
+    const CreateGoals = async () => {
+        try {
+            const existGoals = await AsyncStorage.getItem("goal");
+            if (!existGoals){
+                await AsyncStorage.setItem("Goal",JSON.stringify([]));
+            }
+        }catch (error){
+            console.error("Error Create Goals",error);
+        }
+    };
+    useEffect(()=> {
+        CreateGoals();
+    }, []);
 
+    // Load goals from AsyncStorage when the component mounts
+    useEffect(() => {
+        const loadGoals = async () => {
+            const savedGoals = await AsyncStorage.getItem("goals");
+            if (savedGoals) {
+                setGoals(JSON.parse(savedGoals));
+            }
+        };
+        loadGoals();
+    }, []);
+
+    // Update goals in AsyncStorage when they change
+    useEffect(() => {
+        const saveGoals = async () => {
+            await AsyncStorage.setItem("goals", JSON.stringify(goals));
+        };
+        if (goals.dailyCalories) {
+            saveGoals();
+        }
+    }, [goals]);
+
+    // Update BMI, BMR, and goals based on user input
     useEffect(() => {
         const bmiValue = calculateBMI(weight, height);
         const activityMultiplier = getActivityFactor(activityFactor);
         const bmr = calculateBMR(weight, height, age, sex);
         const tbmr = bmr * activityMultiplier;
         const calorieGoal = calculateCalorieGoal(tbmr, goal);
-        const protein = (calorieGoal* 0.3)/4;
+        const protein = (calorieGoal * 0.3) / 4;
         const fat = calorieGoal * 0.25 / 9;
         const carbs = (calorieGoal * 0.45) / 4;
 
@@ -63,12 +103,12 @@ export const Profile = ({ route }) => {
     const calculateCalorieGoal = (tbmr, goal) => {
         switch (goal) {
             case 'loss':
-                return tbmr - 500; 
+                return tbmr - 500;
             case 'gain':
-                return tbmr + 500; 
+                return tbmr + 500;
             case 'maintain':
             default:
-                return tbmr; // No change for maintenance
+                return tbmr;
         }
     };
 
@@ -78,9 +118,13 @@ export const Profile = ({ route }) => {
         bmi: bmi,
     };
 
+    if (loading) {
+        return <Text>Loading...</Text>; // Show loading state while user data is being loaded
+    }
+
     return (
-        <View style={GlobalStyles.container}>
-            <Text style={styles.greeting}>Hello, {username}</Text>
+        <ScrollView contentContainerStyle={styles.container}>
+            <Text style={styles.greeting}>Hello, {user?.username || 'GuestUser'}</Text>
 
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Body Metrics</Text>
@@ -99,6 +143,38 @@ export const Profile = ({ route }) => {
                             <Text style={styles.metricValue}>{metrics.bmi}</Text>
                         </View>
                     </View>
+                </View>
+            </View>
+
+            <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Select Activity Level</Text>
+                <View style={styles.pickerContainer}>
+                    <Picker
+                        selectedValue={activityFactor}
+                        style={styles.picker}
+                        onValueChange={(itemValue) => setActivityFactor(itemValue)}
+                    >
+                        <Picker.Item label="Sedentary" value="sedentary" />
+                        <Picker.Item label="Lightly Active" value="light" />
+                        <Picker.Item label="Moderately Active" value="moderate" />
+                        <Picker.Item label="Very Active" value="active" />
+                        <Picker.Item label="Super Active" value="very active" />
+                    </Picker>
+                </View>
+            </View>
+
+            <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Select Goal</Text>
+                <View style={styles.pickerContainer}>
+                    <Picker
+                        selectedValue={goal}
+                        style={styles.picker}
+                        onValueChange={(itemValue) => setGoal(itemValue)}
+                    >
+                        <Picker.Item label="Weight Loss" value="loss" />
+                        <Picker.Item label="Weight Gain" value="gain" />
+                        <Picker.Item label="Maintain Weight" value="maintain" />
+                    </Picker>
                 </View>
             </View>
 
@@ -123,19 +199,22 @@ export const Profile = ({ route }) => {
                     </View>
                 </View>
             </View>
-        </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
+    container: {
+        flexGrow: 1,
+        paddingBottom: 20,
+    },
     greeting: {
-        fontSize: 28, // Increased font size for the greeting
+        fontSize: 28,
         fontWeight: 'bold',
         color: '#333',  
         textAlign: 'center',
         marginBottom: 20,
     },
-
     section: {
         marginTop: 20,
         width: '90%',
@@ -191,5 +270,18 @@ const styles = StyleSheet.create({
     metricValue: {
         fontSize: 16,
         color: '#333',
+    },
+    pickerContainer: {
+        width: '100%',
+        marginVertical: 10,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 10,
+        overflow: 'hidden',
+    },
+    picker: {
+        height: 60,
+        width: '100%',
+        paddingVertical: 10,
     },
 });

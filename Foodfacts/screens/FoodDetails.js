@@ -1,14 +1,32 @@
 // screens/FoodDetailsScreen.js
 // unless you want see the whole process comment out the console.logs
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, Image, StyleSheet, ScrollView , Button} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const FoodDetails = ({ route }) => {
+  //const { user } = useContext(UserContext);
   const { photoUri, result , ingredients, nutrition} = route.params;
   console.log('Photo URI:', photoUri);
   console.log('Result:', result);
   console.log('Ingredients:', ingredients);
   console.log('Nutrition:', nutrition);
+
+  const initializeFoodLogs = async () => {
+    try {
+      const existingLogs = await AsyncStorage.getItem("foodLogs");
+      if (!existingLogs) {
+        // Initialize foodLogs with an empty array if it doesn't exist
+        await AsyncStorage.setItem("foodLogs", JSON.stringify([]));
+      }
+    } catch (error) {
+      console.error("Error initializing foodLogs:", error);
+    }
+  };
+  useEffect(() => {
+    initializeFoodLogs();
+  }, []);
+
 
   const totalProtein = nutrition.reduce((total, item) => {
     return total + (item.proteinValue || 0);
@@ -38,13 +56,24 @@ const FoodDetails = ({ route }) => {
     carbs : totalCarbohydrate,
   };
 
-  const saveToLog = () => {
+  const saveToLog = async () => {
     const logData = {
+      id: Date.now().toString(),
       result: result,
-      nutrition:nutritions,
+      nutrition: nutritions,
+      timestamp: new Date().toLocaleString(),
     };
-    console.log('Saving to Log :' , logData);
-    alert('Saved to log!');
+    try {
+      const existingLogs = await AsyncStorage.getItem("foodLogs");
+      const parsedLogs = existingLogs ? JSON.parse(existingLogs) : [];
+
+      const updatedLogs = [...parsedLogs, logData];
+      await AsyncStorage.setItem("foodLogs", JSON.stringify(updatedLogs));
+
+      alert("Saved to log!");
+    } catch (error) {
+      console.error("Error saving to log:", error);
+    }
   };
 
   return (
