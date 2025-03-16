@@ -33,6 +33,6 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get()
   async getUser(@Req() req) {
-    return await this.usersService.findOneById(req.user.id);
+    return await this.usersService.findOneById(req.user.userId);
   }
 }
