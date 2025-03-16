@@ -1,4 +1,5 @@
 import { ApiProperty, ApiSchema } from '@nestjs/swagger';
+import { IsNumber, IsString } from 'class-validator';
 
 export class CreateFoodItemDto {
   readonly name: string;
@@ -87,16 +88,22 @@ export class FoodNutrient {
     'Data must be in American units (but can be converted/shown in other ways in the frontend.',
 })
 export class AdditionalUserPropsDTO {
+  @IsString()
   @ApiProperty()
   sex: string;
+  @IsNumber()
   @ApiProperty()
   age: number;
+  @IsNumber()
   @ApiProperty()
   weight: number;
+  @IsNumber()
   @ApiProperty()
   height: number;
+  @IsString()
   @ApiProperty()
   first_name: string;
+  @IsString()
   @ApiProperty()
   last_name: string;
 }

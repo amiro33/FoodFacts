@@ -23,7 +23,7 @@ export class UsersController {
     @Req() req,
     @Body() additionalUserPropsDTO: AdditionalUserPropsDTO,
   ) {
-    console.log("updateUser")
+    console.log('updateUser', req.user.userId);
     return await this.usersService.updateAdditionalProperties(
       req.user.userId,
       additionalUserPropsDTO,
@@ -33,6 +33,6 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get()
   async getUser(@Req() req) {
-    return await this.usersService.findOne(req.user.id);
+    return await this.usersService.findOneById(req.user.id);
   }
 }
