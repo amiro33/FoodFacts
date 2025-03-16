@@ -47,16 +47,21 @@ const TabNavigator = () => (
 
 const CreateAccountStack = () => (
   <Stack.Navigator initialRouteName="createAccount">
-    <Stack.Screen name="createAccount" component={LoginScreen} />
+    <Stack.Screen
+      name="createAccount"
+      options={{ headerShown: false }}
+      component={LoginScreen}
+    />
     <Stack.Screen
       name="accountDetails"
+      options={{ headerShown: false }}
       component={CreateAccountAdditionalInfo}
     />
   </Stack.Navigator>
 );
 
 const AppNavigator = () => {
-  const { user, loading, completedLogIn } = useContext(UserContext);
+  const { loading, completedLogIn } = useContext(UserContext);
 
   if (loading) return <LoadingScreen />; // Show loading until auth state is resolved
 

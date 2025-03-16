@@ -4,17 +4,19 @@ import { GlobalStyles } from "../GlobalStyles";
 import { Picker } from "@react-native-picker/picker";
 import { UserContext } from "../context/UserContext";
 import { useNavigation } from "@react-navigation/native";
+import { StyleSheet } from "react-native";
 // import RNPickerSelect from 'react-native-picker-select';
 
 export const CreateAccountAdditionalInfo = () => {
   const [sex, setSex] = useState("");
   const [age, setAge] = useState("");
   const [weight, setWeight] = useState("");
-  const [height, setHeight] = useState("");
-  const [name, setName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [feet, setFeet] = useState(0);
+  const [inches, setInches] = useState(0);
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
   const navigation = useNavigation();
-  const { user, setCompletedLogin } = useContext(UserContext);
+  const { auth, completeLogIn } = useContext(UserContext);
 
   const updateDetails = async () => {
     const body = JSON.stringify({
@@ -23,23 +25,18 @@ export const CreateAccountAdditionalInfo = () => {
       sex,
       age,
       weight,
-      height,
+      height: feet * 12 + inches,
     });
-    console.log(body)
     try {
-      console.log("UpdateDetails" + user.token);
       const req = await fetch(`${process.env.EXPO_PUBLIC_SERVER_URL}/users`, {
         method: "PATCH",
         headers: {
-          'Authorization': `Bearer ${user.token}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${auth.access_token}`,
+          "Content-Type": "application/json",
         },
         body,
       });
-      console.log("req sent")
-      console.log(req)
-      if (req.ok) setCompletedLogin(true);
-      console.log("TEXT", await req.text())
+      if (req.ok) completeLogIn(true);
     } catch (e) {
       alert(e);
     }
@@ -49,13 +46,13 @@ export const CreateAccountAdditionalInfo = () => {
       <Text style={GlobalStyles.heading}>Let's confirm a few things...</Text>
       <TextInput
         style={GlobalStyles.input}
-        value={name}
-        onChangeText={(text) => setName(text)}
-        placeholder="Name"
+        value={first_name}
+        onChangeText={(text) => setFirstName(text)}
+        placeholder="First Name"
       />
       <TextInput
         style={GlobalStyles.input}
-        value={lastName}
+        value={last_name}
         onChangeText={(text) => setLastName(text)}
         placeholder="Last Name"
       />
@@ -71,22 +68,55 @@ export const CreateAccountAdditionalInfo = () => {
       <TextInput
         style={GlobalStyles.input}
         value={age}
+        keyboardType="numeric"
         onChangeText={(text) => setAge(text)}
         placeholder="Age"
       />
-      <TextInput
-        style={GlobalStyles.input}
-        value={weight}
-        onChangeText={(text) => setWeight(text)}
-        placeholder="Weight"
-      />
-      <TextInput
-        style={GlobalStyles.input}
-        value={height}
-        onChangeText={(text) => setHeight(text)}
-        placeholder="Height"
-      />
+      <Text style={GlobalStyles.heading}>Enter your weight:</Text>
+      <View style={styles.row}>
+        <TextInput
+          style={styles.input}
+          value={feet}
+          keyboardType="numeric"
+          onChangeText={(text) => setFeet(parseInt(text))}
+          placeholder="Feet"
+        />
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          value={inches}
+          onChangeText={(text) => setInches(parseInt(text))}
+          placeholder="Inches"
+        />
+      </View>
+      <View style={styles.row}>
+        <TextInput
+          style={GlobalStyles.input}
+          value={weight}
+          keyboardType="numeric"
+          onChangeText={(text) => setWeight(text)}
+          placeholder="Weight"
+        />
+        <Text>lbs</Text>
+      </View>
       <Button title="Confirm Details" onPress={() => updateDetails().then()} />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  row: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "flex-end",
+    gap: 4,
+  },
+  input: {
+    flexGrow: 1,
+    flexBasis: 0,
+    borderColor: "black",
+    borderWidth: 1,
+    padding: 2,
+    borderStyle: "solid",
+  },
+});

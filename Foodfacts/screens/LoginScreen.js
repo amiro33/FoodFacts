@@ -19,7 +19,10 @@ export const LoginScreen = () => {
   const navigation = useNavigation();
   const createAccount = async () => {
     try {
-      if (username === "" || password === "") Alert.alert("idk");
+      if (username === "" || password === "") {
+        Alert.alert("Invalid Username or Password Field", "empty");
+        return;
+      }
       const req = await fetch(`${process.env.EXPO_PUBLIC_SERVER_URL}/auth/`, {
         method: "POST",
         headers: {
@@ -37,9 +40,7 @@ export const LoginScreen = () => {
   };
 
   const logIn = async () => {
-    console.warn(username, password);
     try {
-      console.log("logIn");
       if (username == "" || password == "") Alert.alert("idk");
       const req = await fetch(
         `${process.env.EXPO_PUBLIC_SERVER_URL}/auth/login`,
@@ -54,12 +55,10 @@ export const LoginScreen = () => {
       const res = await req.json();
 
       if (res.access_token) {
-        authContext.login({ username, token: res.access_token });
-        Alert.alert("Log in Successful");
+        await authContext.login({ username, access_token: res.access_token });
+        Alert.alert("Log in Successful", JSON.stringify(res));
       }
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   };
 
   const styles = StyleSheet.create({
@@ -132,7 +131,7 @@ export const LoginScreen = () => {
             title="bypass it mwahaha"
             onPress={() => {
               console.log("Hello Wordl");
-              authContext.login({ username, token: "demodemodemo" });
+              authContext.login({});
               authContext.completeLogIn();
             }}
           />

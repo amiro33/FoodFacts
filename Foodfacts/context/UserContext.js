@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
+  const [auth, setAuth] = useState(null);
   const [user, setUser] = useState(null);
   const [completedLogIn, setCompletedLogIn] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -12,10 +13,11 @@ export const UserProvider = ({ children }) => {
     // Check for stored login state
     const loadUser = async () => {
       const userData = await AsyncStorage.getItem("user");
-      if (userData) setUser(JSON.parse(userData));
+      if (userData) setAuth(JSON.parse(userData));
       setLoading(false);
     };
     loadUser();
+    getUserPrefs().then();
   }, []);
   useEffect(() => {}, []);
 
@@ -33,9 +35,29 @@ export const UserProvider = ({ children }) => {
     setCompletedLogIn(true);
   };
 
+  const getUserPrefs = async () => {
+    console.log("GetUserPrefs");
+    const req = await fetch(`${process.env.EXPO_PUBLIC_SERVER_URL}/users`, {
+      headers: {
+        Authorization: `Bearer ${auth.access_token}`,
+      },
+    });
+    const res = await req.json();
+    console.log(res);
+    setUser(res);
+  };
   return (
     <UserContext.Provider
-      value={{ user, login, logout, completedLogIn, completeLogIn, loading }}
+      value={{
+        auth,
+        user,
+        login,
+        logout,
+        completedLogIn,
+        completeLogIn,
+        loading,
+        getUserPrefs,
+      }}
     >
       {children}
     </UserContext.Provider>

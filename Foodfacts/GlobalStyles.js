@@ -7,9 +7,11 @@ export const GlobalStyles = StyleSheet.create({
   },
   container: {
     padding: 8,
+    gap: 4,
   },
   input: {
     borderStyle: "solid",
     borderColor: "black",
+    borderWidth: 1,
   },
 });
