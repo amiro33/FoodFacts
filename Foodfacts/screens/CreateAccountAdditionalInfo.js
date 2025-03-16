@@ -36,7 +36,12 @@ export const CreateAccountAdditionalInfo = () => {
         },
         body,
       });
-      if (req.ok) completeLogIn(true);
+      console.log(auth.access_token);
+      if (!req.ok) {
+        throw new Error(req.statusText);
+      } else {
+        completeLogIn();
+      }
     } catch (e) {
       alert(e);
     }

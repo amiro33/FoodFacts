@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
+  BatchSearchDto,
+  ChatgptFoodResponse,
   CreateFoodItemDto,
   FDCGetResponse,
   FDCItem,
@@ -9,6 +11,7 @@ import {
 } from 'src/dto';
 import { Category } from 'src/entities/category.entity';
 import { FoodItem } from 'src/entities/food_item.entity';
+import { UnitConverter } from 'src/util/unitConverter.util';
 import { Like, Repository } from 'typeorm';
 
 @Injectable()
@@ -30,16 +33,21 @@ export class FoodFactsService {
     const cat = this.categoryRepository.create({ name });
     return await this.categoryRepository.save(cat);
   }
-  async batchFoodSearch(searchTerms: Array<string>): Promise<FoodFactsItem[]> {
+  async batchFoodSearch(
+    foodsToSearch: Array<ChatgptFoodResponse>,
+  ): Promise<FoodFactsItem[]> {
     const response: Array<FoodFactsItem> = [];
-    for (const term of searchTerms) {
-      const searchUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(term)}&api_key=${this.configService.get('FDC_API_KEY')}&pageSize=10`;
+    for (const food of foodsToSearch) {
+      const searchUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(food.description)}&api_key=${this.configService.get('FDC_API_KEY')}&pageSize=10`;
       const req = await fetch(searchUrl);
       const res: FDCGetResponse = await req.json();
       const topResult = res.foods[0];
+
+      const a = UnitConverter.scaleNutrients(food, topResult);
+      console.log(a);
       const newItem = new FoodFactsItem();
       Object.assign(newItem, topResult);
-      const nutrients = topResult.foodNutrients.filter(
+      const nutrients = a.scaledNutrients.filter(
         ({ nutrientName }: FoodNutrient) =>
           nutrientName.includes('Energy') ||
           nutrientName.includes('Fat') ||
@@ -48,6 +56,7 @@ export class FoodFactsService {
       );
       newItem.nutrients = nutrients;
       newItem.additionalInfo = topResult.brandName;
+      console.log(topResult.servingSize);
       response.push(newItem);
     }
     return response;

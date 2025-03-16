@@ -16,7 +16,11 @@ export class BatchSearchDto {
   @ApiProperty({
     example: ['Orange Juice', 'Ground Beef'],
   })
-  readonly foods: Array<string>;
+  readonly foods: Array<ChatgptFoodResponse>;
+}
+export class ChatgptFoodResponse {
+  readonly description: string;
+  readonly quantity: string;
 }
 export class FDCGetResponse {
   foods: Array<FDCItem>;
