@@ -140,11 +140,11 @@ export const Profile = ({ route }) => {
           <View style={styles.metricRow}>
             <View style={styles.metricItem}>
               <Text style={styles.metricLabel}>Weight</Text>
-              <Text style={styles.metricValue}>{user?.weight} lbs</Text>
+              <Text style={styles.metricValue}>{weight} lbs</Text>
             </View>
             <View style={styles.metricItem}>
               <Text style={styles.metricLabel}>Height</Text>
-              <Text style={styles.metricValue}>{user?.height} ft</Text>
+              <Text style={styles.metricValue}>{height} ft</Text>
             </View>
             <View style={styles.metricItem}>
               <Text style={styles.metricLabel}>BMI</Text>

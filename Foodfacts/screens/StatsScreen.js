@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { format, set } from 'date-fns';
-import Svg, { Path, Circle } from 'react-native-svg';
+import { format } from 'date-fns';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 export const StatsScreen = () => {
   const today = format(new Date(), 'EEEE,MMMM d');
@@ -11,15 +12,16 @@ export const StatsScreen = () => {
     calories: 0,
     protein: 0,
     carbs: 0,
-    fats: 0
+    fats: 0,
   });
-   const [totals, setTotals] = useState({
-      proteins: 0,
-      energy: 0,
-      fat: 0,
-      carbs: 0,
-    });
   
+  const [totals, setTotals] = useState({
+    proteins: 0,
+    energy: 0,
+    fat: 0,
+    carbs: 0,
+  });
+
   // Initialize progress object, using 0 for current values if undefined or null
   const progress = {
     calories: { current: totals.energy, goal: goals.calories },
@@ -29,79 +31,87 @@ export const StatsScreen = () => {
   };
 
   useEffect(() => {
-    const loadGoalAndLogs = async () => {
+    const loadGoals = async () => {
       try {
         const savedGoals = await AsyncStorage.getItem("goals");
         if (savedGoals) {
           const parsedGoals = JSON.parse(savedGoals);
-          console.log('Saved Goals:', parsedGoals); 
-          // Set defaults if the keys are missing
+          console.log("Saved Goals:", parsedGoals);
+  
+          // Set default values if keys are missing
           setGoals({
             calories: parsedGoals.dailyCalories || 0,
             protein: parsedGoals.protein || 0,
             carbs: parsedGoals.carbs || 0,
-            fats: parsedGoals.fat || 0
+            fats: parsedGoals.fat || 0,
           });
         } else {
-          console.log('No saved goals found, setting defaults.');
+          console.log("No saved goals found, setting defaults.");
         }
-        // Load logs
-      const savedLogs = await AsyncStorage.getItem("logs");
-      if (savedLogs) {
-        const parsedLogs = JSON.parse(savedLogs);
-        console.log('Saved Logs:', parsedLogs);
-        setTotals({
-          proteins: parsedLogs.protein || 0,
-          energy: parsedLogs.engery || 0,
-          fat: parsedLogs.fat|| 0,
-          carbs: parsedLogs.carbs || 0,
-        });
-
-      } else {
-        console.log('No saved logs found.');
-      }
       } catch (error) {
-        console.error("Error loading goals", error);
+        console.error("❌ Error loading goals:", error);
       }
     };
-    loadGoalAndLogs();
+
+    loadGoals();
   }, []);
 
-  // Calculate total and angles for pie chart
-  const total = progress.protein.current + progress.carbs.current + progress.fats.current;
-  const angles = {
-    protein: total > 0 ? (progress.protein.current / total) * 360 : 0,
-    carbs: total > 0 ? (progress.carbs.current / total) * 360 : 0,
-    fats: total > 0 ? (progress.fats.current / total) * 360 : 0,
-  };
+  useFocusEffect(
+    useCallback(() => {
+      console.log("StatsScreen focused");
+  
+      // Load updated totals whenever StatsScreen is focused
+      const loadTotals = async () => {
+        try {
+          const savedTotals = await AsyncStorage.getItem("totals");
+          if (savedTotals) {
+            const parsedTotals = JSON.parse(savedTotals);
+            console.log("📥 Loaded Totals from AsyncStorage:", parsedTotals);
+            setTotals(parsedTotals);
+          } else {
+            console.log("No saved totals found.");
+          }
+        } catch (error) {
+          console.error("Error loading totals:", error);
+        }
+      };
 
-  // Calculate percentages for display
-  const proteinPercentage = total > 0 ? Math.round((angles.protein / 360) * 100) : 0;
-  const carbsPercentage = total > 0 ? Math.round((angles.carbs / 360) * 100) : 0;
-  const fatsPercentage = total > 0 ? Math.round((angles.fats / 360) * 100) : 0;
+      // Load updated goals whenever StatsScreen is focused
+      const loadGoals = async () => {
+        try {
+          const savedGoals = await AsyncStorage.getItem("goals");
+          if (savedGoals) {
+            const parsedGoals = JSON.parse(savedGoals);
+            console.log("Saved Goals on Focus:", parsedGoals);
+  
+            // Set default values if keys are missing
+            setGoals({
+              calories: parsedGoals.dailyCalories || 0,
+              protein: parsedGoals.protein || 0,
+              carbs: parsedGoals.carbs || 0,
+              fats: parsedGoals.fat || 0,
+            });
+          } else {
+            console.log("No saved goals found on focus.");
+          }
+        } catch (error) {
+          console.error("❌ Error loading goals on focus:", error);
+        }
+      };
+  
+      loadTotals();  // Load latest totals whenever StatsScreen is focused
+      loadGoals();   // Load latest goals whenever StatsScreen is focused
+    }, [])
+  );
+  
+  // Log state changes for `totals` and `goals`
+  useEffect(() => {
+    console.log("Updated Totals state:", totals);
+  }, [totals]);
 
-  // Helper function to create pie chart slices
-  const createPieSlice = (startAngle, endAngle) => {
-    const center = 50;
-    const radius = 50;
-    const start = (startAngle - 90) * (Math.PI / 180);
-    const end = (endAngle - 90) * (Math.PI / 180);
-
-    const startX = center + radius * Math.cos(start);
-    const startY = center + radius * Math.sin(start);
-    const endX = center + radius * Math.cos(end);
-    const endY = center + radius * Math.sin(end);
-
-    const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-    return `M ${center} ${center} L ${startX} ${startY} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${endX} ${endY} Z`;
-  };
-
-  let currentAngle = 0;
-  const proteinPath = createPieSlice(currentAngle, currentAngle + angles.protein);
-  currentAngle += angles.protein;
-  const carbsPath = createPieSlice(currentAngle, currentAngle + angles.carbs);
-  currentAngle += angles.carbs;
-  const fatsPath = createPieSlice(currentAngle, currentAngle + angles.fats);
+  useEffect(() => {
+    console.log("Updated Goals state:", goals);
+  }, [goals]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -109,32 +119,6 @@ export const StatsScreen = () => {
         <View style={styles.header}>
           <Text style={styles.date}>{new Date().toLocaleDateString()}</Text>
           <Text style={styles.title}>Daily Summary</Text>
-        </View>
-
-        <View style={styles.macroDistribution}>
-          <Text style={styles.sectionTitle}>Macro Distribution</Text>
-          <View style={styles.chartContainer}>
-            <Svg height="200" width="200" viewBox="0 0 100 100">
-              <Circle cx="50" cy="50" r="48" fill="white" />
-              <Path d={proteinPath} fill="#0891b2" />
-              <Path d={carbsPath} fill="#0d9488" />
-              <Path d={fatsPath} fill="#7c3aed" />
-            </Svg>
-            <View style={styles.legendContainer}>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendColor, { backgroundColor: '#0891b2' }]} />
-                <Text style={styles.legendText}>Protein {proteinPercentage}%</Text>
-              </View>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendColor, { backgroundColor: '#0d9488' }]} />
-                <Text style={styles.legendText}>Carbs {carbsPercentage}%</Text>
-              </View>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendColor, { backgroundColor: '#7c3aed' }]} />
-                <Text style={styles.legendText}>Fats {fatsPercentage}%</Text>
-              </View>
-            </View>
-          </View>
         </View>
 
         <View style={styles.statsContainer}>
@@ -176,39 +160,6 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     color: '#0f172a',
-  },
-  macroDistribution: {
-    padding: 20,
-  },
-  chartContainer: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 20,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  legendContainer: {
-    marginTop: 20,
-    width: '100%',
-  },
-  legendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  legendColor: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    marginRight: 8,
-  },
-  legendText: {
-    fontSize: 14,
-    color: '#64748b',
   },
   statsContainer: {
     padding: 20,

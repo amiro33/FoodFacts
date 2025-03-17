@@ -1,12 +1,13 @@
 // screens/FoodDetailsScreen.js
 // unless you want see the whole process comment out the console.logs
-import React, { useEffect } from "react";
+import React, { useEffect , useState} from "react";
 import { View, Text, Image, StyleSheet, ScrollView , Button} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const FoodDetails = ({ route }) => {
   //const { user } = useContext(UserContext);
   const { photoUri, result , ingredients, nutrition} = route.params;
+  const [logs, setLogs] = useState([]);
   console.log('Photo URI:', photoUri);
   console.log('Result:', result);
   console.log('Ingredients:', ingredients);
@@ -69,8 +70,10 @@ const FoodDetails = ({ route }) => {
 
       const updatedLogs = [...parsedLogs, logData];
       await AsyncStorage.setItem("foodLogs", JSON.stringify(updatedLogs));
+      setLogs(updatedLogs); 
 
       alert("Saved to log!");
+
     } catch (error) {
       console.error("Error saving to log:", error);
     }
