@@ -5,8 +5,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserContext } from "../context/UserContext";
 
 export const Profile = ({ route }) => {
-  const { auth, user, loading } = useContext(UserContext);
-  const { weight = 199.8, height = 5.9, sex = "male", age = 30 } = auth || {};
+  const { user, loading } = useContext(UserContext);
+  const { weight = 199.8, height = 5.9, sex = "male", age = 30 } = user || {};
 
   const [activityFactor, setActivityFactor] = useState("sedentary");
   const [goal, setGoal] = useState("loss");
@@ -24,7 +24,6 @@ export const Profile = ({ route }) => {
   };
   useEffect(() => {
     CreateGoals();
-    alert(JSON.stringify(user));
   }, []);
 
   // Load goals from AsyncStorage when the component mounts
@@ -132,8 +131,7 @@ export const Profile = ({ route }) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.greeting}>
-        {JSON.stringify(user)}
-        Hello, {auth?.first_name || "GuestUser"}
+        Hello, {user?.first_name || "GuestUser"}
       </Text>
 
       <View style={styles.section}>

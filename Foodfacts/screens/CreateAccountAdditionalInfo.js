@@ -8,7 +8,7 @@ import { StyleSheet } from "react-native";
 // import RNPickerSelect from 'react-native-picker-select';
 
 export const CreateAccountAdditionalInfo = () => {
-  const [sex, setSex] = useState("");
+  const [sex, setSex] = useState("n/a");
   const [age, setAge] = useState("");
   const [weight, setWeight] = useState("");
   const [feet, setFeet] = useState(0);
@@ -69,7 +69,7 @@ export const CreateAccountAdditionalInfo = () => {
         style={GlobalStyles.input}
         value={age}
         keyboardType="numeric"
-        onChangeText={(text) => setAge(text)}
+        onChangeText={(text) => setAge(parseInt(text))}
         placeholder="Age"
       />
       <Text style={GlobalStyles.heading}>Enter your weight:</Text>
@@ -94,7 +94,7 @@ export const CreateAccountAdditionalInfo = () => {
           style={GlobalStyles.input}
           value={weight}
           keyboardType="numeric"
-          onChangeText={(text) => setWeight(text)}
+          onChangeText={(text) => setWeight(parseInt(text))}
           placeholder="Weight"
         />
         <Text>lbs</Text>

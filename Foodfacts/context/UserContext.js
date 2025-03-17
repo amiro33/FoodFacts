@@ -16,17 +16,18 @@ export const UserProvider = ({ children }) => {
       if (userData) setAuth(JSON.parse(userData));
       setLoading(false);
     };
-    loadUser();
+    loadUser().then();
     getUserPrefs().then();
   }, []);
   useEffect(() => {}, []);
 
   const login = async (userData) => {
-    setUser(userData);
+    setAuth(userData);
     await AsyncStorage.setItem("user", JSON.stringify(userData));
   };
 
   const logout = async () => {
+    setAuth(null);
     setUser(null);
     await AsyncStorage.removeItem("user");
     setCompletedLogIn(false);
@@ -45,6 +46,7 @@ export const UserProvider = ({ children }) => {
     const res = await req.json();
     console.log(res);
     setUser(res);
+    console.log(res);
   };
   return (
     <UserContext.Provider

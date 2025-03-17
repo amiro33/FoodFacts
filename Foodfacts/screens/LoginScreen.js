@@ -56,7 +56,6 @@ export const LoginScreen = () => {
 
       if (res.access_token) {
         await authContext.login({ username, access_token: res.access_token });
-        Alert.alert("Log in Successful", JSON.stringify(res));
       }
     } catch (e) {}
   };
