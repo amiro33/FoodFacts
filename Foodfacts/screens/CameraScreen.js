@@ -17,7 +17,9 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import foodLogo from "../assets/camera2.png";
 
 const prompt = `
-  You are to recognize a food (may be prepared, or may be an individual ingredient) and provide an ingredients list based on what is visible in the picture. For the next messages, please respond in JSON only, using this format:
+  You are to recognize a food (may be prepared, or may be an individual ingredient) and provide an ingredients list based on what is visible in the picture.
+  For grown fruits or vegetables, please specify that they're fresh: e.g 'Fresh Tomato'.
+  For the response, please respond in JSON only, using this format:
 
   {
     "success": true,
@@ -39,7 +41,6 @@ const prompt = `
   Rules for Confidence Levels:
 
       High confidence → Clearly visible ingredients (e.g., a chicken breast, tomato slices, avocado).
-      Medium confidence → Partially visible or inferred based on common preparation (e.g., lettuce under a bun, sauce spread on bread).
       Low confidence → Ingredients that are usually present but not visible (e.g., seasoning, marinade, oil used for cooking`;
 
 const CameraScreen = () => {
