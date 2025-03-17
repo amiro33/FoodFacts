@@ -6,9 +6,20 @@ const MoreScreen = () => {
   const userContext = useContext(UserContext);
   return (
     <View>
-      <Text>Logged in as {userContext.auth?.username}</Text>
-      <Button title="Sign Out" onPress={() => userContext.logout()} />
-      <Button title="Sign Out" onPress={() => userContext.getUserPrefs()} />
+      <View>
+        {userContext?.auth.token ? (
+          <View>
+            <Text>Logged in as {userContext.auth.username}</Text>
+            <Button title="Sign Out" onPress={() => userContext.logout()} />
+          </View>
+        ) : (
+          <Text>Not Logged In</Text>
+        )}
+      </View>
+      <Button
+        title="Manually Refresh User Prefs"
+        onPress={() => userContext.getUserPrefs()}
+      />
     </View>
   );
 };

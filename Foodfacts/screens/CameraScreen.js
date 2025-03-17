@@ -18,7 +18,7 @@ import foodLogo from "../assets/camera2.png";
 
 const prompt = `
   You are to recognize a food (may be prepared, or may be an individual ingredient) and provide an ingredients list based on what is visible in the picture.
-  For grown fruits or vegetables, please specify that they're fresh: e.g 'Fresh Tomato'.
+  For fruits or vegetables, please specify that they're fresh: e.g 'Fresh Tomato'.
   For the response, please respond in JSON only, using this format:
 
   {
@@ -143,6 +143,7 @@ const CameraScreen = () => {
         const ingredients = jsonResponse.ingredients.map((ing) => ({
           quantity: ing.quantity,
           description: ing.description,
+          confidence: ing.confidence,
         }));
         const dishDescription = jsonResponse.description;
         console.log("Extracted Ingredients:", ingredients);
