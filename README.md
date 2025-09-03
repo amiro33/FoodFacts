@@ -26,5 +26,7 @@ Server: Nodes.js/python
 1. Performance- making sure the app loads in a timely matter. 
 2. Security- user privacy and data collection (geo-mapping, date/time, and video/camera) 
 3. Use- Easy self-explanatory usage and results. 
-4. Scalability- Can handle growth of users and data collection. 
+4. Scalability- Can handle growth of users and data collection.
+
+![image](https://github.com/user-attachments/assets/13b5f71f-f3bd-4906-98b2-6ffcb6c40a70)
 
