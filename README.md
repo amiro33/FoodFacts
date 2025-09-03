@@ -6,7 +6,7 @@ Do you ever find food labels be confusing to read and can’t tell if something 
 Well, we have an app for you! 
 This is a micro tracker app where you take a photo/ video of food or labels, and the app identifies the food letting you know if it is good for you. The app is easy to use and will display the nutrition all while keeping track of the foods you tell the app that you consume.  This not only is easy to use but also allows users to be involved in their health tracking. 
 Example: 
-Say you want to avoid sugars. But there are so many new names for sugars. This app will help you track this, just take a photo. 
+Say you want to avoid sugars. But there are so many new names for sugars. This app will help you track this, just take a photo using this app. 
 
 # Front End
 Mobile app allowing users to use camera on cell phone.
