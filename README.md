@@ -1,4 +1,5 @@
-# CSC 394 Project
+# Food Facts 
+CSC 394 Project
 # Team Members
 Group 6: T.Wright, J.Sanchez, A.Miroslawska
 # Project Ptch
